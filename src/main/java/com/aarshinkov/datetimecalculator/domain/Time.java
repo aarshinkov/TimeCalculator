@@ -17,6 +17,19 @@ public class Time implements Serializable {
         this.seconds = 0L;
     }
 
+    public Time(Long totalSeconds) {
+        // Calculate hours
+        this.hours = totalSeconds / 3600; // 1 hour = 3600 seconds
+        totalSeconds %= 3600; // Remaining seconds after calculating hours
+
+        // Calculate minutes
+        this.minutes = totalSeconds / 60; // 1 minute = 60 seconds
+        totalSeconds %= 60; // Remaining seconds after calculating minutes
+
+        // Remaining seconds
+        this.seconds = totalSeconds;
+    }
+
     public Time(Long hours, Long minutes, Long seconds) {
 
         this.seconds = 0L;
@@ -79,14 +92,69 @@ public class Time implements Serializable {
         StringBuilder builder = new StringBuilder();
 
         builder.append(addTrailingZeroIfAvailable(this.hours));
-        if (this.hours != null && this.hours > 0 && (hasUnit(TimeUnits.MINUTE.getUnitNamePlural()) || hasUnit(TimeUnits.SECOND.getUnitNamePlural()))) {
+
+//        if (hasUnit(TimeUnits.HOUR.getUnitNamePlural())) {
             builder.append(":");
-        }
+//        }
+
         builder.append(addTrailingZeroIfAvailable(this.minutes));
-        if (this.minutes != null && this.minutes > 0 && hasUnit(TimeUnits.SECOND.getUnitNamePlural())) {
+
+//        if (hasUnit(TimeUnits.HOUR.getUnitNamePlural()) || hasUnit(TimeUnits.SECOND.getUnitNamePlural())) {
             builder.append(":");
-        }
+//        }
+
         builder.append(addTrailingZeroIfAvailable(this.seconds));
+
+        return String.valueOf(builder);
+    }
+
+    public String printFullTime(boolean showHoursIfZero, boolean showMinutesIfZero, boolean showSecondsIfZero) {
+
+        // 08:34:00
+        StringBuilder builder = new StringBuilder();
+
+        boolean isHoursPrinted = false;
+        boolean isMinutesPrinted = false;
+
+        if (showHoursIfZero) {
+            builder.append(addTrailingZeroIfAvailable(this.hours));
+            isHoursPrinted = true;
+        } else {
+            if (this.hours > 0) {
+                builder.append(addTrailingZeroIfAvailable(this.hours));
+                isHoursPrinted = true;
+            }
+        }
+
+        if (showMinutesIfZero) {
+            if (isHoursPrinted) {
+                builder.append(":");
+            }
+            isMinutesPrinted = true;
+            builder.append(addTrailingZeroIfAvailable(this.minutes));
+        } else {
+            if (this.minutes > 0) {
+                if (isHoursPrinted) {
+                    builder.append(":");
+                }
+                builder.append(addTrailingZeroIfAvailable(this.minutes));
+                isMinutesPrinted = true;
+            }
+        }
+
+        if (showSecondsIfZero) {
+            if (isMinutesPrinted) {
+                builder.append(":");
+            }
+            builder.append(addTrailingZeroIfAvailable(this.seconds));
+        } else {
+            if (this.seconds > 0) {
+                if (isMinutesPrinted) {
+                    builder.append(":");
+                }
+                builder.append(addTrailingZeroIfAvailable(this.seconds));
+            }
+        }
 
         return String.valueOf(builder);
     }
@@ -131,7 +199,7 @@ public class Time implements Serializable {
         return calculatedSeconds;
     }
 
-    private boolean isTimeEmptyOrNull() {
+    public boolean isTimeEmptyOrNull() {
 
         if (hours != null && hours > 0) {
             return false;
@@ -181,6 +249,10 @@ public class Time implements Serializable {
 
     private String addTrailingZeroIfAvailable(long unit) {
 
+        if (unit == 0) {
+            return "00";
+        }
+
         if (unit > 0) {
             if (unit <= 9) {
                 return "0" + unit;
@@ -196,17 +268,17 @@ public class Time implements Serializable {
         StringBuilder builder = new StringBuilder();
 
         if (unit > 0) {
-            if (unit == 1) {
-                builder.append("1 ").append(unitName);
-            } else {
-                builder.append(unit).append(" ").append(unitName).append("s");
+            builder.append(unit).append(" ").append(unitName);
+
+            if (unit > 1) {
+                builder.append("s");
             }
         }
 
         return builder;
     }
 
-    public long getHours() {
+    public Long getHours() {
         return hours;
     }
 
@@ -214,7 +286,7 @@ public class Time implements Serializable {
         this.hours = hours;
     }
 
-    public long getMinutes() {
+    public Long getMinutes() {
         return minutes;
     }
 
@@ -222,7 +294,7 @@ public class Time implements Serializable {
         this.minutes = minutes;
     }
 
-    public long getSeconds() {
+    public Long getSeconds() {
         return seconds;
     }
 

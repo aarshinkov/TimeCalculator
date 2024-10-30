@@ -17,7 +17,31 @@ public class TimeCalculatorTest {
     }
 
     @Test
+    public void test_totalSecondsConstructor() {
+        Time t = new Time(3662L);
+        assertEquals(new Time(1L, 1L, 2L), t);
+
+        t = new Time(52L);
+        assertEquals(new Time(0L, 0L, 52L), t);
+
+        t = new Time(85L);
+        assertEquals(new Time(0L, 1L, 25L), t);
+    }
+
+    @Test
     public void test_TimeToString() {
+
+        Time t = new Time();
+
+        t = new Time(178L);
+        assertEquals("00:02:58", t.toString());
+
+        t = new Time(58L);
+        assertEquals("00:00:58", t.toString());
+    }
+
+    @Test
+    public void test_printTime() {
         Time t = new Time();
 
         assertEquals("", t.printTime());
@@ -281,5 +305,85 @@ public class TimeCalculatorTest {
         minutes = -1;
 
         assertEquals(new Time(0L, 0L, 0L), tc.minutesToTime(minutes));
+    }
+
+    @Test
+    public void test2() {
+        Time s1 = new Time("172:12:00");
+        Time s2 = new Time("427:54:00");
+        Time s3 = new Time("387:16:12");
+        Time c1 = new Time("705:27:36");
+        Time total = tc.addTimes(s1, s2, s3, c1);
+        System.out.println(total);
+    }
+
+    @Test
+    public void test_times() {
+        Time atanasTime = getAtanasTime();
+        Time andreiTime = getAndreiTime();
+
+        System.out.println(atanasTime);
+        System.out.println(andreiTime);
+    }
+
+    @Test
+    public void testFullTime() {
+
+        Time t1 = new Time(0L);
+        assertEquals("00:00:00", t1.printFullTime(true, true, true));
+
+        t1 = new Time(0L);
+        assertEquals("00:00", t1.printFullTime(false, true, true));
+
+        t1 = new Time(0L);
+        assertEquals("00", t1.printFullTime(false, false, true));
+
+        t1 = new Time(0L);
+        assertEquals("", t1.printFullTime(false, false, false));
+
+        t1 = new Time(3660L);
+        assertEquals("01:01:00", t1.printFullTime(true, true, true));
+
+        t1 = new Time(62L);
+        assertEquals("00:01:02", t1.printFullTime(true, true, true));
+
+        t1 = new Time(320L);
+        assertEquals("05:20", t1.printFullTime(false, true, true));
+
+        t1 = new Time(320L);
+        assertEquals("00:05:20", t1.printFullTime(true, true, true));
+
+        t1 = new Time(1020L);
+        assertEquals("00:17", t1.printFullTime(true, true, false));
+
+        t1 = new Time(1020L);
+        assertEquals("00:17:00", t1.printFullTime(true, true, true));
+
+        t1 = new Time(1020L);
+        assertEquals("17:00", t1.printFullTime(false, true, true));
+    }
+
+    private Time getAtanasTime() {
+        Time pilot = new Time("213:08:40");
+        Time controller = new Time("367:17:19");
+        Time atis = new Time("323:15:24");
+        Time observer = new Time("41:58:41");
+        return tc.addTimes(pilot, controller, atis, observer);
+    }
+
+    private Time getKristianTime() {
+        Time pilot = new Time("735:29:30");
+        Time controller = new Time("169:03:24");
+        Time atis = new Time("164:06:16");
+        Time observer = new Time("22:38:01");
+        return tc.addTimes(pilot, controller, atis, observer);
+    }
+
+    private Time getAndreiTime() {
+        Time pilot = new Time("297:37:14");
+        Time controller = new Time("347:50:45");
+        Time atis = new Time("315:04:00");
+        Time observer = new Time("09:03:25");
+        return tc.addTimes(pilot, controller, atis, observer);
     }
 }
